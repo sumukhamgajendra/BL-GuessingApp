@@ -1,37 +1,41 @@
 package org.example.com.bridgelabz;
-
 import java.util.Scanner;
-/**
- * MAIN CLASS
- *
- * Coordinates the game flow:
- * 1. Initialize game
- * 2. Accept user guesses
- * 3. Validate guesses
- * 4. Stop when game ends
- *
- * @author Sumukha
- * @version 3.0
- */
 
+/**
+ * Use Case 4: Error Handling & Validation
+ *
+ * Ensures all inputs are validated safely.
+ *
+ * @version 4.0
+ */
 public class GuessingApp {
-    public static void main(String[] args) {
+
+    public static void main(String[] args)
+            throws InvalidInputException {
+
+        Scanner scanner = new Scanner(System.in);
+
         System.out.println("Welcome to the Guessing App");
 
         GameConfig config = new GameConfig();
         config.showRules();
 
-        Scanner scanner = new Scanner(System.in);
         int attempts = 0;
+        int hintsUsed = 0;
 
-        /*
-         * Game loop runs until the player
-         * exhausts the maximum attempts.
-         */
         while (attempts < config.getMaxAttempts()) {
 
             System.out.print("Enter your guess: ");
-            int guess = scanner.nextInt();
+
+            int guess;
+            try {
+                guess = ValidationService
+                        .validateInput(scanner.nextLine());
+            } catch (InvalidInputException e) {
+                System.out.println(e.getMessage());
+                continue;
+            }
+
             attempts++;
 
             String result = GuessValidator.validateGuess(
@@ -39,12 +43,20 @@ public class GuessingApp {
                     config.getTargetNumber()
             );
 
+            if (!"CORRECT".equals(result)
+                    && hintsUsed < config.getMaxHints()) {
+
+                hintsUsed++;
+                System.out.println(
+                        HintService.generateHint(
+                                config.getTargetNumber(),
+                                hintsUsed
+                        )
+                );
+            }
+
             System.out.println(result);
 
-            /*
-             * Stop the loop immediately
-             * if the correct number is guessed.
-             */
             if ("CORRECT".equals(result)) {
                 break;
             }
@@ -52,5 +64,4 @@ public class GuessingApp {
 
         scanner.close();
     }
-
 }
