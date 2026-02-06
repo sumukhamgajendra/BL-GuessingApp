@@ -11,7 +11,7 @@ import java.util.Scanner;
  * 4. Stop when game ends
  *
  * @author Sumukha
- * @version 2.0
+ * @version 3.0
  */
 
 public class GuessingApp {
