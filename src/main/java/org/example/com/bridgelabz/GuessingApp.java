@@ -1,12 +1,14 @@
 package org.example.com.bridgelabz;
+
 import java.util.Scanner;
 
 /**
- * Use Case 4: Error Handling & Validation
+ * Use Case 5: Game Result Storage
  *
- * Ensures all inputs are validated safely.
+ * Persists game result after completion.
  *
- * @version 4.0
+ * @author Sumukha
+ * @version 5.0
  */
 public class GuessingApp {
 
@@ -16,12 +18,15 @@ public class GuessingApp {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Welcome to the Guessing App");
+        System.out.print("Enter Player Name: ");
+        String player = scanner.nextLine();
 
         GameConfig config = new GameConfig();
         config.showRules();
 
         int attempts = 0;
         int hintsUsed = 0;
+        boolean win = false;
 
         while (attempts < config.getMaxAttempts()) {
 
@@ -58,10 +63,12 @@ public class GuessingApp {
             System.out.println(result);
 
             if ("CORRECT".equals(result)) {
+                win = true;
                 break;
             }
         }
 
+        StorageService.saveResult(player, attempts, win);
         scanner.close();
     }
 }
